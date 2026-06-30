@@ -1,6 +1,6 @@
-package com.example.asset_management_system.repository;
+package com.example.Hanpoon.repository;
 
-import com.example.asset_management_system.domain.User;
+import com.example.Hanpoon.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

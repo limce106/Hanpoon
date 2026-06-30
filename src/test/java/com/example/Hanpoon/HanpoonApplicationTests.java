@@ -1,10 +1,10 @@
-package com.example.asset_management_system;
+package com.example.Hanpoon;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class AssetManagementSystemApplicationTests {
+class HanpoonApplicationTests {
 
 	@Test
 	void contextLoads() {

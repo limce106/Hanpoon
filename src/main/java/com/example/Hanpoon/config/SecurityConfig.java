@@ -1,4 +1,4 @@
-package com.example.asset_management_system.config;
+package com.example.Hanpoon.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

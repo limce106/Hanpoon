@@ -1,4 +1,4 @@
-package com.example.asset_management_system.domain;
+package com.example.Hanpoon.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;

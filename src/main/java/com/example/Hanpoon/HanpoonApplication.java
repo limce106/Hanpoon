@@ -1,13 +1,13 @@
-package com.example.asset_management_system;
+package com.example.Hanpoon;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AssetManagementSystemApplication {
+public class HanpoonApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AssetManagementSystemApplication.class, args);
+		SpringApplication.run(HanpoonApplication.class, args);
 	}
 
 }
