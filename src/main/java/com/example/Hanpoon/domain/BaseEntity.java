@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @MappedSuperclass // 이 클래스는 테이블이 아니라 부모 역할
 @EntityListeners(AuditingEntityListener.class) // 시간 자동 감지
 @Getter
-public class BaseEntity {
+public abstract class BaseEntity {
     // 생성 시간
     @CreatedDate
     @Column(updatable = false)
