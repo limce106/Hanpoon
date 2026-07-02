@@ -2,6 +2,7 @@ package com.example.Hanpoon.controller;
 
 import com.example.Hanpoon.dto.SignupRequest;
 import com.example.Hanpoon.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +18,7 @@ public class AuthController {
 
     // 회원가입 API
     @PostMapping("/signup")
-    public String signup(@RequestBody SignupRequest request)
+    public String signup(@Valid @RequestBody SignupRequest request)
     {
         userService.signup(request);
         return "회원가입 성공";
