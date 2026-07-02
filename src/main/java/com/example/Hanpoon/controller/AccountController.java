@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
@@ -17,5 +19,12 @@ public class AccountController {
     {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return accountService.createAccount(email);
+    }
+
+    @GetMapping
+    public List<AccountCreateResponse> getMyAccounts()
+    {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return accountService.getMyAccounts(email);
     }
 }
