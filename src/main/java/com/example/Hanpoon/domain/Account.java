@@ -30,4 +30,14 @@ public class Account {
         this.balance = 0L;
         this.user = user;
     }
+
+    public void deposit(Long amount)
+    {
+        this.balance += amount;
+    }
+
+    public void withdraw(Long amount)
+    {
+        this.balance -= amount;
+    }
 }
