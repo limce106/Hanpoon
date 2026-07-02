@@ -14,6 +14,6 @@ public class JwtProperties {
     private String secret;
 
     // JWT 만료 시간(ms)
-    @Value("${jwt.expiration")
+    @Value("${jwt.expiration}")
     private long expiration;
 }

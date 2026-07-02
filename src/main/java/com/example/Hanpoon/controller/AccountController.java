@@ -1,5 +1,6 @@
 package com.example.Hanpoon.controller;
 
+import com.example.Hanpoon.domain.Transaction;
 import com.example.Hanpoon.dto.AccountCreateResponse;
 import com.example.Hanpoon.dto.TransactionRequest;
 import com.example.Hanpoon.dto.TransferRequest;
@@ -46,5 +47,11 @@ public class AccountController {
     public void transfer(@RequestBody TransferRequest request)
     {
         accountService.transfer(request);
+    }
+
+    @GetMapping("/{accountNumber}/transactions")
+    public List<Transaction> getTransactions(@PathVariable String  accountNumber)
+    {
+        return accountService.getTransactions(accountNumber);
     }
 }

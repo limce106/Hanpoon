@@ -1,11 +1,14 @@
 package com.example.Hanpoon.service;
 
 import com.example.Hanpoon.domain.Account;
+import com.example.Hanpoon.domain.Transaction;
+import com.example.Hanpoon.domain.TransactionType;
 import com.example.Hanpoon.domain.User;
 import com.example.Hanpoon.dto.AccountCreateResponse;
 import com.example.Hanpoon.dto.TransactionRequest;
 import com.example.Hanpoon.dto.TransferRequest;
 import com.example.Hanpoon.repository.AccountRepository;
+import com.example.Hanpoon.repository.TransactionRepository;
 import com.example.Hanpoon.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import java.util.List;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
 
     public AccountCreateResponse createAccount(String email)
     {
@@ -52,6 +56,15 @@ public class AccountService {
                 .orElseThrow(() -> new RuntimeException("계좌 없음"));
 
         account.deposit(request.getAmount());
+
+        transactionRepository.save(
+                new Transaction(
+                        account.getAccountNumber(),
+                        TransactionType.DEPOSIT,
+                        request.getAmount(),
+                        account.getBalance()
+                )
+        );
     }
 
     // 출금
@@ -67,6 +80,15 @@ public class AccountService {
         }
 
         account.withdraw(request.getAmount());
+
+        transactionRepository.save(
+                new Transaction(
+                        account.getAccountNumber(),
+                        TransactionType.WITHDRAW,
+                        request.getAmount(),
+                        account.getBalance()
+                )
+        );
     }
     
     // 이체
@@ -86,5 +108,29 @@ public class AccountService {
 
         from.withdraw(request.getAmount());
         to.deposit(request.getAmount());
+
+        transactionRepository.save(
+                new Transaction(
+                        from.getAccountNumber(),
+                        TransactionType.TRANSFER_OUT,
+                        request.getAmount(),
+                        from.getBalance()
+                )
+        );
+
+        transactionRepository.save(
+                new Transaction(
+                        to.getAccountNumber(),
+                        TransactionType.TRANSFER_IN,
+                        request.getAmount(),
+                        to.getBalance()
+                )
+        );
+    }
+    
+    // 거래내역 조회
+    public List<Transaction> getTransactions(String accountNumber)
+    {
+        return transactionRepository.findByAccountNumberOrderByIdDesc(accountNumber);
     }
 }
