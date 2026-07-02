@@ -6,12 +6,15 @@ import com.example.Hanpoon.domain.User;
 import com.example.Hanpoon.domain.Role;
 import com.example.Hanpoon.dto.LoginRequest;
 import com.example.Hanpoon.dto.SignupRequest;
+import com.example.Hanpoon.jwt.JwtProvider;
 import com.example.Hanpoon.repository.UserRepository;
+import com.example.Hanpoon.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 // 사용자 관련 비즈니스 로직 처리
 @Service
@@ -19,6 +22,8 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;    // DB 접근 객체
     private  final PasswordEncoder passwordEncoder; // 비밀번호 암호화 객체
+    private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
 
     // 회원가입 처리 로직
     public void signup(SignupRequest request)
@@ -41,14 +46,16 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void login(LoginRequest request)
+    public String login(LoginRequest request)
     {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new InvalidLoginException("이메일 또는 비밀번호가 올바르지 않습니다."));
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                ));
 
-        if(!passwordEncoder.matches(request.getPassword(), user.getPassword()))
-        {
-            throw new InvalidLoginException("이메일 또는 비밀번호가 올바르지 않습니다.");
-        }
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        return jwtProvider.generateToken(userDetails.getUsername());
     }
 }
