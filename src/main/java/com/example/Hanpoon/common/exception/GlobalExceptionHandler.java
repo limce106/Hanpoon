@@ -31,4 +31,11 @@ public class GlobalExceptionHandler {
         // 리소스 충돌 409
         return ResponseEntity.status(409).body(ApiResponse.fail(exception.getMessage()));
     }
+
+    @ExceptionHandler(InvalidLoginException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInvalidLoginException(
+            InvalidLoginException exception
+    ) {
+        return ResponseEntity.status(401).body(ApiResponse.fail(exception.getMessage()));
+    }
 }

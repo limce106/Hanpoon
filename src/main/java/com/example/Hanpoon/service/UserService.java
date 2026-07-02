@@ -1,13 +1,17 @@
 package com.example.Hanpoon.service;
 
 import com.example.Hanpoon.common.exception.DuplicateEmailException;
+import com.example.Hanpoon.common.exception.InvalidLoginException;
 import com.example.Hanpoon.domain.User;
 import com.example.Hanpoon.domain.Role;
+import com.example.Hanpoon.dto.LoginRequest;
 import com.example.Hanpoon.dto.SignupRequest;
 import com.example.Hanpoon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 // 사용자 관련 비즈니스 로직 처리
 @Service
@@ -33,5 +37,18 @@ public class UserService {
                 request.getName(),
                 Role.USER
         );
+
+        userRepository.save(user);
+    }
+
+    public void login(LoginRequest request)
+    {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new InvalidLoginException("이메일 또는 비밀번호가 올바르지 않습니다."));
+
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword()))
+        {
+            throw new InvalidLoginException("이메일 또는 비밀번호가 올바르지 않습니다.");
+        }
     }
 }
