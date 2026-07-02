@@ -158,4 +158,9 @@ public class AccountService {
 
         account.changeStatus(status);
     }
+
+    public List<Account> getAllAccounts()
+    {
+        return accountRepository.findAll();
+    }
 }

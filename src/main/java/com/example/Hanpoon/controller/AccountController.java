@@ -1,5 +1,6 @@
 package com.example.Hanpoon.controller;
 
+import com.example.Hanpoon.domain.Account;
 import com.example.Hanpoon.domain.AccountStatus;
 import com.example.Hanpoon.domain.Transaction;
 import com.example.Hanpoon.dto.AccountCreateResponse;
@@ -7,6 +8,7 @@ import com.example.Hanpoon.dto.TransactionRequest;
 import com.example.Hanpoon.dto.TransferRequest;
 import com.example.Hanpoon.service.AccountService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,5 +62,11 @@ public class AccountController {
     public void changeStatus(@PathVariable String accountNumber, @RequestParam AccountStatus status)
     {
         accountService.changeStatus(accountNumber, status);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/accounts")
+    public List<Account> getAllAccounts() {
+        return accountService.getAllAccounts();
     }
 }
