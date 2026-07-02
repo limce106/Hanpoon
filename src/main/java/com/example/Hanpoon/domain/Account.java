@@ -24,11 +24,15 @@ public class Account {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Enumerated(EnumType.STRING)
+    private AccountStatus status;
+
     public Account(String accountNumber, User user)
     {
         this.accountNumber = accountNumber;
         this.balance = 0L;
         this.user = user;
+        this.status = AccountStatus.ACTIVE;
     }
 
     public void deposit(Long amount)
@@ -39,5 +43,10 @@ public class Account {
     public void withdraw(Long amount)
     {
         this.balance -= amount;
+    }
+
+    public void changeStatus(AccountStatus status)
+    {
+        this.status = status;
     }
 }

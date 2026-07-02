@@ -1,12 +1,10 @@
 package com.example.Hanpoon.service;
 
 import com.example.Hanpoon.common.exception.AccountNotFoundException;
+import com.example.Hanpoon.common.exception.InactiveAccountException;
 import com.example.Hanpoon.common.exception.InsufficientBalanceException;
 import com.example.Hanpoon.common.exception.UserNotFoundException;
-import com.example.Hanpoon.domain.Account;
-import com.example.Hanpoon.domain.Transaction;
-import com.example.Hanpoon.domain.TransactionType;
-import com.example.Hanpoon.domain.User;
+import com.example.Hanpoon.domain.*;
 import com.example.Hanpoon.dto.AccountCreateResponse;
 import com.example.Hanpoon.dto.TransactionRequest;
 import com.example.Hanpoon.dto.TransferRequest;
@@ -58,6 +56,10 @@ public class AccountService {
         Account account = accountRepository.findByAccountNumber(request.getAccountNumber())
                 .orElseThrow(() -> new AccountNotFoundException("계좌 없음"));
 
+        if (account.getStatus() != AccountStatus.ACTIVE) {
+            throw new RuntimeException("사용 불가능한 계좌입니다.");
+        }
+
         account.deposit(request.getAmount());
 
         transactionRepository.save(
@@ -76,6 +78,10 @@ public class AccountService {
     {
         Account account = accountRepository.findByAccountNumber(request.getAccountNumber())
                 .orElseThrow(() -> new AccountNotFoundException("계좌 없음"));
+
+        if (account.getStatus() != AccountStatus.ACTIVE) {
+            throw new RuntimeException("사용 불가능한 계좌입니다.");
+        }
 
         if(account.getBalance() < request.getAmount())
         {
@@ -103,6 +109,14 @@ public class AccountService {
         
         Account to = accountRepository.findByAccountNumber(request.getToAccount())
                 .orElseThrow(() -> new AccountNotFoundException("입금 계좌 없음"));
+
+        if (from.getStatus() != AccountStatus.ACTIVE) {
+            throw new InactiveAccountException("출금 계좌가 비활성 상태입니다.");
+        }
+
+        if (to.getStatus() != AccountStatus.ACTIVE) {
+            throw new InactiveAccountException("입금 계좌가 비활성 상태입니다.");
+        }
 
         if(from.getBalance() < request.getAmount())
         {
@@ -135,5 +149,13 @@ public class AccountService {
     public List<Transaction> getTransactions(String accountNumber)
     {
         return transactionRepository.findByAccountNumberOrderByIdDesc(accountNumber);
+    }
+
+    public void changeStatus(String accountNumber, AccountStatus status)
+    {
+        Account account = accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException("계좌 없음"));
+
+        account.changeStatus(status);
     }
 }

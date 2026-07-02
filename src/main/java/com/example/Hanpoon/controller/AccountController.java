@@ -1,5 +1,6 @@
 package com.example.Hanpoon.controller;
 
+import com.example.Hanpoon.domain.AccountStatus;
 import com.example.Hanpoon.domain.Transaction;
 import com.example.Hanpoon.dto.AccountCreateResponse;
 import com.example.Hanpoon.dto.TransactionRequest;
@@ -53,5 +54,11 @@ public class AccountController {
     public List<Transaction> getTransactions(@PathVariable String  accountNumber)
     {
         return accountService.getTransactions(accountNumber);
+    }
+
+    @PatchMapping("/{accountNumber}/status")
+    public void changeStatus(@PathVariable String accountNumber, @RequestParam AccountStatus status)
+    {
+        accountService.changeStatus(accountNumber, status);
     }
 }
