@@ -2,28 +2,44 @@ package com.example.Hanpoon.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
+                // CSRF 비활성화
                 .csrf(csrf -> csrf.disable())
+
+                // Form Login 비활성화
                 .formLogin(form -> form.disable())
+
+                // Basic 인증 비활성화
                 .httpBasic(httpBasic -> httpBasic.disable())
+
+                // 권한 설정
                 .authorizeHttpRequests(auth -> auth
+
+                        // Swagger 허용
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/swagger-ui.html",
-                                "/api/auth/**"
+                                "/swagger-ui.html"
                         ).permitAll()
+
+                        // 회원가입 / 로그인 허용
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/auth/signup",
+                                "/api/auth/login"
+                        ).permitAll()
+
+                        // 나머지는 인증 필요
                         .anyRequest().authenticated()
                 );
 

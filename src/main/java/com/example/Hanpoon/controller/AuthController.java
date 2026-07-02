@@ -1,9 +1,12 @@
 package com.example.Hanpoon.controller;
 
+import com.example.Hanpoon.common.response.ApiResponse;
 import com.example.Hanpoon.dto.SignupRequest;
 import com.example.Hanpoon.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,9 +21,11 @@ public class AuthController {
 
     // 회원가입 API
     @PostMapping("/signup")
-    public String signup(@Valid @RequestBody SignupRequest request)
+    public ResponseEntity<ApiResponse<Void>> signup(@Valid @RequestBody SignupRequest request)
     {
         userService.signup(request);
-        return "회원가입 성공";
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.success("회원가입이 완료되었습니다.", null)
+        );
     }
 }

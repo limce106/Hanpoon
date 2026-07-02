@@ -1,5 +1,6 @@
 package com.example.Hanpoon.service;
 
+import com.example.Hanpoon.common.exception.DuplicateEmailException;
 import com.example.Hanpoon.domain.User;
 import com.example.Hanpoon.domain.Role;
 import com.example.Hanpoon.dto.SignupRequest;
@@ -19,7 +20,7 @@ public class UserService {
         // 이메일 중복 체크
         if(userRepository.findByEmail(request.getEmail()).isPresent())
         {
-            throw new RuntimeException("이미 존재하는 이메일입니다.");
+            throw new DuplicateEmailException("이미 존재하는 이메일입니다.");
         }
 
         User user = new User(
