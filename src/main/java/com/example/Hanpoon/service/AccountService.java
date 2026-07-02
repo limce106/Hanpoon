@@ -1,5 +1,8 @@
 package com.example.Hanpoon.service;
 
+import com.example.Hanpoon.common.exception.AccountNotFoundException;
+import com.example.Hanpoon.common.exception.InsufficientBalanceException;
+import com.example.Hanpoon.common.exception.UserNotFoundException;
 import com.example.Hanpoon.domain.Account;
 import com.example.Hanpoon.domain.Transaction;
 import com.example.Hanpoon.domain.TransactionType;
@@ -27,7 +30,7 @@ public class AccountService {
     {
         // 사용자 조회
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("유저 없음"));
+                .orElseThrow(() -> new UserNotFoundException("유저 없음"));
 
         // 계좌번호 생성
         String accountNumber = "1106-" + System.currentTimeMillis();
@@ -40,7 +43,7 @@ public class AccountService {
     public List<AccountCreateResponse> getMyAccounts(String email)
     {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("유저 없음"));
+                .orElseThrow(() -> new UserNotFoundException("유저 없음"));
 
         List<Account> accounts = accountRepository.findByUser(user);
 
@@ -53,7 +56,7 @@ public class AccountService {
     public void deposit(TransactionRequest request)
     {
         Account account = accountRepository.findByAccountNumber(request.getAccountNumber())
-                .orElseThrow(() -> new RuntimeException("계좌 없음"));
+                .orElseThrow(() -> new AccountNotFoundException("계좌 없음"));
 
         account.deposit(request.getAmount());
 
@@ -72,11 +75,11 @@ public class AccountService {
     public void withdraw(TransactionRequest request)
     {
         Account account = accountRepository.findByAccountNumber(request.getAccountNumber())
-                .orElseThrow(() -> new RuntimeException("계좌 없음"));
+                .orElseThrow(() -> new AccountNotFoundException("계좌 없음"));
 
         if(account.getBalance() < request.getAmount())
         {
-            throw new RuntimeException("잔액 부족");
+            throw new InsufficientBalanceException("잔액 부족");
         }
 
         account.withdraw(request.getAmount());
@@ -96,14 +99,14 @@ public class AccountService {
     public void transfer(TransferRequest request)
     {
         Account from = accountRepository.findByAccountNumber(request.getFromAccount())
-                .orElseThrow(() -> new RuntimeException("출금 계좌 없음"));
+                .orElseThrow(() -> new AccountNotFoundException("출금 계좌 없음"));
         
         Account to = accountRepository.findByAccountNumber(request.getToAccount())
-                .orElseThrow(() -> new RuntimeException("입금 계좌 없음"));
+                .orElseThrow(() -> new AccountNotFoundException("입금 계좌 없음"));
 
         if(from.getBalance() < request.getAmount())
         {
-            throw new RuntimeException("잔액 부족");
+            throw new InsufficientBalanceException("잔액 부족");
         }
 
         from.withdraw(request.getAmount());

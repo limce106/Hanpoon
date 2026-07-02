@@ -1,10 +1,12 @@
 package com.example.Hanpoon.common.exception;
 
 import com.example.Hanpoon.common.response.ApiResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import com.example.Hanpoon.dto.ErrorResponse;
 
 
 // 프로젝트 전체의 예외를 처리하는 클래스
@@ -37,5 +39,37 @@ public class GlobalExceptionHandler {
             InvalidLoginException exception
     ) {
         return ResponseEntity.status(401).body(ApiResponse.fail(exception.getMessage()));
+    }
+
+    // 계좌 없음
+    @ExceptionHandler(AccountNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleAccountNotFoundException(
+            AccountNotFoundException exception
+    ) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, exception.getMessage()));
+    }
+
+    // 잔액 부족
+    @ExceptionHandler(InsufficientBalanceException.class)
+    public ResponseEntity<ErrorResponse> handleInsufficientBalanceException(
+            InsufficientBalanceException exception
+    ) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(400, exception.getMessage()));
+    }
+
+    // 유저 없음
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFoundException(
+            UserNotFoundException exception
+    ) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, exception.getMessage()));
+    }
+
+    // 서버 오류
+    @ExceptionHandler(Exception .class)
+    public ResponseEntity<ErrorResponse> handleGeneric(
+            Exception  exception
+    ) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, "서버 오류 발생"));
     }
 }
